@@ -15,7 +15,7 @@
     </div>
 
     <div class="main">
-        <div class="card">
+        <!-- <div class="card">
             <div class="title">Harry Potter</div>
             <div class="author">J.K Rowling</div>
             <div class="pages">250</div>
@@ -35,18 +35,31 @@
             <div class="pages">250</div>
             <button class="status button">Read</button>
             <button class="remove button">Remove</button>
-        </div>
-        
-        
-       
-        
-        
+        </div> -->
         
         <div class="add-btn card">
-            <div><i class="fa-solid fa-plus"></i></div>
+            <i class="fa-solid fa-plus"></i>
         </div>
     </div>
 
+
+    <!-- Modal for adding books -->
+    <div class="modal-overlay">
+        
+            <div class="modal-container">
+                <i class="fa-solid fa-xmark"></i>
+                <div class="modal-title">New Book</div>
+                <input type="text" class="title" placeholder="title" required minlength="2" maxlength="60" name="title">
+                <input type="text" class="author" placeholder="author" required minlength="2" maxlength="60" name="author">
+                <input type="number" class="pages" placeholder="pages" required min="10" max="10000" name="pages">
+                <div class="read-input">
+                    <input type="checkbox" class="read-check" id="read-check" required name="read">
+                    <label for="read-check">Have you read it?</label>
+                </div>
+                <button class="submit-btn">Submit</button>
+            </div>
+        
+    </div>
 
     <div class="marca">by santipu_</div>
 
