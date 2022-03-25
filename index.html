@@ -15,28 +15,9 @@
     </div>
 
     <div class="main">
-        <!-- <div class="card">
-            <div class="title">Harry Potter</div>
-            <div class="author">J.K Rowling</div>
-            <div class="pages">250</div>
-            <button class="status button">Read</button>
-            <button class="remove button">Remove</button>
-        </div>
-        <div class="card">
-            <div class="title">Harry Potter</div>
-            <div class="author">J.K Rowling</div>
-            <div class="pages">250</div>
-            <button class="status button">Read</button>
-            <button class="remove button">Remove</button>
-        </div>
-        <div class="card">
-            <div class="title">Harry Potter</div>
-            <div class="author">J.K Rowling</div>
-            <div class="pages">250</div>
-            <button class="status button">Read</button>
-            <button class="remove button">Remove</button>
-        </div> -->
-        
+
+        <!-- Here goes the cards added dinamically with JS -->
+
         <div class="add-btn card">
             <i class="fa-solid fa-plus"></i>
         </div>
@@ -45,19 +26,18 @@
 
     <!-- Modal for adding books -->
     <div class="modal-overlay">
-        
-            <div class="modal-container">
+            <form action="" method="post" autocomplete="off" id="form">
                 <i class="fa-solid fa-xmark"></i>
                 <div class="modal-title">New Book</div>
                 <input type="text" class="title" placeholder="title" required minlength="2" maxlength="60" name="title">
                 <input type="text" class="author" placeholder="author" required minlength="2" maxlength="60" name="author">
                 <input type="number" class="pages" placeholder="pages" required min="10" max="10000" name="pages">
                 <div class="read-input">
-                    <input type="checkbox" class="read-check" id="read-check" required name="read">
+                    <input type="checkbox" class="read-check" id="read-check" name="read">
                     <label for="read-check">Have you read it?</label>
                 </div>
-                <button class="submit-btn">Submit</button>
-            </div>
+                <button class="submit-btn" type="submit">Submit</button>
+            </form>
         
     </div>
 
