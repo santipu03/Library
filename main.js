@@ -1,7 +1,6 @@
 
 // Me falta:
-//     1. remove button
-//     2. Read or not button
+
 //     3. comprovaciones del form vía JS
 //     4. style buttons of cards
 //     5. mejorar display de books en la pantalla 
@@ -22,6 +21,7 @@ const inputPages = document.querySelector(".pages");
 const inputRead = document.querySelector(".read-check");
 const closeBtnModal = document.querySelector(".fa-xmark");
 const form = document.getElementById("form");
+const modalOverlay = document.querySelector(".modal-overlay");
 
 
 
@@ -29,14 +29,23 @@ const form = document.getElementById("form");
 myLibrary = [];
 // number of identification for every book
 let serialNumber = 0;
-//constructor of the books
-function Book (author, title, pages, read, num) {
-    this.author = author,
-    this.title = title,
-    this.pages = pages,
-    this.read = read,
-    this.num = num
-};
+
+class Book {
+    constructor (author, title, pages, read, num) {
+        this.author = author,
+        this.title = title,
+        this.pages = pages,
+        this.read = read,
+        this.num = num
+    }
+    changeReadStatus () {
+        (this.read === "read") ? this.read = "not read" : this.read = "read";
+    }
+    deleteBook () {
+        this
+    }
+}
+
 
 
 // Modal Event Listeners
@@ -45,6 +54,12 @@ addBtn.addEventListener("click", () => {
 })
 closeBtnModal.addEventListener("click", () => {
     modal.classList.remove("show");
+})
+window.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) {
+        modal.classList.remove("show");
+        form.reset();
+    }
 })
 
 // Verify that the error message isn't already displayed, create it and display it in the form
@@ -57,13 +72,6 @@ const displayErrorMsg = () => {
     }
 }
 
-// clean the form
-const cleanForm = () => {
-    inputTitle.value = "";
-    inputAuthor.value = "";
-    inputPages.value = "";
-    inputRead.checked = false;
-}
 
 
 // add book to the array
@@ -75,11 +83,10 @@ const addBookToLibrary = (author, title, pages, read) => {
     // if there's no books in the array, push it and finish
     if (myLibrary.length == 0) {
         myLibrary.push(book);
-        serialNumber++;
         return book;
     }
 
-    // verify that the title of the book is not in the array, push it and increment serial number. Otherwise, display error and clean form
+    // verify that the title of the book is not in the array, push it and increment serial number. Otherwise, display error and clear form
     let push;
     myLibrary.forEach(item => {
         (item.title === book.title) ? push = false : push = true
@@ -87,11 +94,10 @@ const addBookToLibrary = (author, title, pages, read) => {
             
     if (push) {
             myLibrary.push(book);
-            serialNumber++;
             return book;
     } else {
         displayErrorMsg();
-        cleanForm();
+        form.reset();
         return undefined; 
     }
 }
@@ -102,53 +108,67 @@ const createCard = () => {
     let newTitle = document.createElement("div");
     let newAuthor = document.createElement("div");
     let newPages = document.createElement("div");
-    let newRemoveBtn = document.createElement("button");
-    let newReadBtn = document.createElement("button");
-
+    
     newCard.classList.add("card");
-    newCard.setAttribute("data-num", serialNumber)
+    newCard.setAttribute("data-num", serialNumber);
     newTitle.classList.add("title");
     newAuthor.classList.add("author");
     newPages.classList.add("pages");
-    newRemoveBtn.classList.add("button");
-    newRemoveBtn.classList.add("remove");
-    newReadBtn.classList.add("button");
-    newReadBtn.classList.add("read-btn");
+    
     newCard.appendChild(newTitle);
     newCard.appendChild(newAuthor);
     newCard.appendChild(newPages);
-    newCard.appendChild(newReadBtn);
-    newCard.appendChild(newRemoveBtn);
     
     return newCard;
 }
 
-// add the values of the new book in the array to the element created before and append it to the main HTML
-const displayBook = (book) => {
+
+const renderBook = (book) => {
+
+    // create card
     let newCard = createCard();
+    
+    //define and create buttons to handle events
+    let newRemoveBtn = document.createElement("button");
+    let newReadBtn = document.createElement("button");
+    newRemoveBtn.classList.add("remove");
+    newReadBtn.classList.add("read-btn");
+    newCard.appendChild(newReadBtn);
+    newCard.appendChild(newRemoveBtn);
+
+    // add values of element in array to div and append to main
     newCard.children[0].textContent = book.title;
     newCard.children[1].textContent = book.author;
     newCard.children[2].textContent = book.pages;
     newCard.children[3].textContent = book.read;
     newCard.children[4].textContent = "Remove";
     main.appendChild(newCard);
-}
 
-// verify if the addButton element is not in last place and move it
-const moveAddButton = () => (addBtn.nextElementSibling !== null)? main.appendChild(addBtn): 0;
+    // verify if the addButton element is not in last place and move it
+    (addBtn.nextElementSibling !== null)? main.appendChild(addBtn): 0;
 
-
-// update every click to get all the "remove" classes, add a listener for a click and remove the parent of the button clicked
-window.addEventListener("click", () => {
-    const removeBtns = document.querySelectorAll(".remove");
-    removeBtns.forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            e.target.parentElement.remove();
-        });
+    // add event listeners to buttons
+    newRemoveBtn.addEventListener("click", (e) => {
+        e.target.parentElement.remove();
+        myLibrary.forEach((item, i) => {
+            if (item.num === book.num) {
+                myLibrary.splice(i,1);
+            }
+        })
     });
-})
 
+    newReadBtn.addEventListener("click", (e) => {
+        myLibrary.forEach(item => {
+            if (item.num === book.num){
+                item.changeReadStatus();
+                e.target.textContent = item.read;
+            }
+        })
+    })
 
+    // increment serialNumber
+    serialNumber++;
+}
 
 
 submitBook.addEventListener("click", (e)=> {
@@ -159,15 +179,14 @@ submitBook.addEventListener("click", (e)=> {
 
     let newBook = addBookToLibrary(transactionFormData.get("author"),transactionFormData.get("title"),transactionFormData.get("pages"),readCheck);
     if (newBook !== undefined) {
-        displayBook(newBook);
-        moveAddButton();
+        renderBook(newBook);
         modal.classList.remove("show");
-        cleanForm();
+        form.reset();
     }
-    
-    
 })
 
+let shit = addBookToLibrary("Tolkien","Lord of the Rings","986","not read");
+renderBook(shit);
 
 
 
