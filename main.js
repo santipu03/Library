@@ -2,11 +2,7 @@
 // Me falta:
 
 //     3. comprovaciones del form vía JS
-//     4. style buttons of cards
 //     5. mejorar display de books en la pantalla 
-
-
-
 
 
 
@@ -41,9 +37,6 @@ class Book {
     changeReadStatus () {
         (this.read === "read") ? this.read = "not read" : this.read = "read";
     }
-    deleteBook () {
-        this
-    }
 }
 
 
@@ -71,8 +64,6 @@ const displayErrorMsg = () => {
         form.appendChild(message);
     }
 }
-
-
 
 // add book to the array
 const addBookToLibrary = (author, title, pages, read) => {
@@ -131,7 +122,7 @@ const renderBook = (book) => {
     //define and create buttons to handle events
     let newRemoveBtn = document.createElement("button");
     let newReadBtn = document.createElement("button");
-    newRemoveBtn.classList.add("remove");
+    newRemoveBtn.classList.add("remove-btn");
     newReadBtn.classList.add("read-btn");
     newCard.appendChild(newReadBtn);
     newCard.appendChild(newRemoveBtn);

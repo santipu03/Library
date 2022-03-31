@@ -3,8 +3,10 @@
 
 /* Variables */
 :root{
-    --clr-pral-dark: #a8a29e;
-    --clr-pral-light: #e7e5e4;
+    --clr-second: #565656;
+    --clr-second-light: #dedede;
+    --clr-second-light2: #cdcdcd;
+    --clr-pral: #fcd34d;
     --white: #fff;
     --black: #000;
     --green-btn: #86efac;
@@ -53,16 +55,16 @@ textarea {
     position: fixed;
 }
 
+
 body {
     height: 100vh;
     font-family: 'Roboto', sans-serif;
 }
 
-
-
+/* header */
 .header {
     height: 15%;
-    background-color: #565656;
+    background-color: var(--clr-second);
     color: var(--white);
     display: flex;
     align-items: center;
@@ -75,9 +77,10 @@ body {
     
 }
 
+/* Main */
 .main {
     min-height: 85%;
-    background-color: #fcd34d;
+    background-color: var(--clr-pral);
     display: grid;
     gap: 30px;
     padding: 20px;
@@ -85,9 +88,10 @@ body {
     font-size: 20px;
 }
 
+/* Cards */
 .card {
     height: 250px;
-    background-color: #fff;
+    background-color: var(--white);
     padding: 30px;
     border-radius: 10px;
     display: flex;
@@ -98,17 +102,38 @@ body {
     flex-wrap: nowrap;
 }
 
+/* buttons */
+.read-btn,
+.remove-btn{
+    border: none;
+    height: 50px;
+    border-radius: 10px;
+    background-color: var(--clr-second-light);
+}
+
+.read-btn:hover,
+.remove-btn:hover {
+    cursor: pointer;
+    background-color: var(--clr-second-light2);
+}
+
+.read-btn:active,
+.remove-btn:active {
+    border: 2px solid var(--clr-second);
+    background-color: transparent;
+}
+
 .add-btn {
     background-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #565656;
+    border: 2px solid var(--clr-second);
 
 }
 i {
     font-size: 40px;
-    color: #565656;
+    color: var(--clr-second);
 }
 
 
