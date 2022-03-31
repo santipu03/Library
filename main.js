@@ -1,20 +1,9 @@
 
-// Me falta:
-
-//     3. comprovaciones del form vía JS
-//     5. mejorar display de books en la pantalla 
-
-
-
 // DOM Manipulation
 const main = document.querySelector(".main");
 const addBtn = document.querySelector(".add-btn");
 const modal = document.querySelector(".modal-overlay");
-const submitBook = document.querySelector(".submit-btn");
-const inputTitle = document.querySelector(".title");
-const inputAuthor = document.querySelector(".author");
-const inputPages = document.querySelector(".pages");
-const inputRead = document.querySelector(".read-check");
+const submitBookBtn = document.querySelector(".submit-btn");
 const closeBtnModal = document.querySelector(".fa-xmark");
 const form = document.getElementById("form");
 const modalOverlay = document.querySelector(".modal-overlay");
@@ -39,14 +28,13 @@ class Book {
     }
 }
 
-
-
-// Modal Event Listeners
+// Modal Event Listeners to open and close it
 addBtn.addEventListener("click", () => {
     modal.classList.add("show");
 })
 closeBtnModal.addEventListener("click", () => {
     modal.classList.remove("show");
+    form.reset();
 })
 window.addEventListener("click", (e) => {
     if (e.target === modalOverlay) {
@@ -56,12 +44,13 @@ window.addEventListener("click", (e) => {
 })
 
 // Verify that the error message isn't already displayed, create it and display it in the form
-const displayErrorMsg = () => {
-    if (!form.lastChild.textContent.startsWith("This")){
-        let message = document.createElement("div");
-        message.textContent = "This book has already been added";
-        message.style.color = "red";
-        form.appendChild(message);
+const displayErrorMsg = (text) => {
+    let message = document.createElement("div");
+    message.textContent = text
+    message.style.color = "red";
+    form.appendChild(message);
+    if (message.previousElementSibling !== submitBookBtn){
+        message.previousElementSibling.remove()
     }
 }
 
@@ -77,7 +66,7 @@ const addBookToLibrary = (author, title, pages, read) => {
         return book;
     }
 
-    // verify that the title of the book is not in the array, push it and increment serial number. Otherwise, display error and clear form
+    // verify that the title of the book is not already in the array and push it. Otherwise, display error and clear form
     let push;
     myLibrary.forEach(item => {
         (item.title === book.title) ? push = false : push = true
@@ -87,7 +76,7 @@ const addBookToLibrary = (author, title, pages, read) => {
             myLibrary.push(book);
             return book;
     } else {
-        displayErrorMsg();
+        displayErrorMsg("This book has already been added");
         form.reset();
         return undefined; 
     }
@@ -161,13 +150,30 @@ const renderBook = (book) => {
     serialNumber++;
 }
 
+// validate that all the fields are completed
+const formValidation = (title, author, pages) => {
+    if (title.length <= 0 || author.length <= 0 || pages.length <= 0){
+        displayErrorMsg("Complete all the fields");
+        return false
+    }
+}
 
-submitBook.addEventListener("click", (e)=> {
+// event listener for the submit button of the form
+submitBookBtn.addEventListener("click", (e)=> {
     e.preventDefault();
     let transactionFormData = new FormData(form);
+
+    // validate the form
+    let validation = formValidation(transactionFormData.get("title"), transactionFormData.get("author"), transactionFormData.get("pages"));
+    if (validation === false) {
+        return
+    }
+
+    // get if the book is read or not
     let readCheck;
     (transactionFormData.get("read") == "on") ? readCheck = "read" : readCheck = "not read"
 
+    // add book to the array and display it in screen
     let newBook = addBookToLibrary(transactionFormData.get("author"),transactionFormData.get("title"),transactionFormData.get("pages"),readCheck);
     if (newBook !== undefined) {
         renderBook(newBook);
@@ -175,15 +181,3 @@ submitBook.addEventListener("click", (e)=> {
         form.reset();
     }
 })
-
-let shit = addBookToLibrary("Tolkien","Lord of the Rings","986","not read");
-renderBook(shit);
-
-
-
-
-
-
-
-
-
