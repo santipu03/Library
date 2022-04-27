@@ -35,12 +35,10 @@ const displayItemsInStorage = () => {
     if (localStorage.length > 0){
         for (let i = 0; i < localStorage.length; i++){
             let book = JSON.parse(localStorage.getItem(localStorage.key(i)));
-            addBookToLibrary(book);
             renderBook(book);
         }
     }
 }
-
 
 // Modal Event Listeners to open and close it
 addBtn.addEventListener("click", () => {
@@ -72,33 +70,8 @@ const displayErrorMsg = (text) => {
 }
 
 
-const craeteBook = (author,title,pages,read) => {
+const createBook = (author,title,pages,read) => {
     return new Book(author, title, pages, read, serialNumber);
-}
-
-// add book to the array
-const addBookToLibrary = (book) => {
-    
-    // if there's no books in the array, push it and finish
-    if (myLibrary.length == 0) {
-        myLibrary.push(book);
-        return book;
-    }
-
-    // verify that the title of the book is not already in the array and push it. Otherwise, display error and clear form
-    let push;
-    myLibrary.forEach(item => {
-        (item.title === book.title) ? push = false : push = true
-    });
-            
-    if (push) {
-            myLibrary.push(book);
-            return book;
-    } else {
-        displayErrorMsg("This book has already been added");
-        form.reset();
-        return undefined; 
-    }
 }
 
 // create a new card with all the classes and attributes and return it
@@ -193,24 +166,36 @@ submitBookBtn.addEventListener("click", (e)=> {
     (transactionFormData.get("read") == "on") ? readCheck = "read" : readCheck = "not read"
 
     // add book to the array and display it in screen
-    let newBook = craeteBook(transactionFormData.get("author"),transactionFormData.get("title"),transactionFormData.get("pages"),readCheck);
-    addBookToLibrary(newBook);
-    if (newBook !== undefined) {
+    let newBook = createBook(transactionFormData.get("author"),transactionFormData.get("title"),transactionFormData.get("pages"),readCheck);
+    let isUnique = addBookToStorage(newBook);
+    if (isUnique !== undefined) {
         renderBook(newBook);
-        addToStorage(newBook);
         modal.classList.remove("show");
         form.reset();
     }
 })
 
 
+// store new books to Storage
+const addBookToStorage = (book) => {
+    if (localStorage.length === 0){
+        localStorage.setItem(book.title, JSON.stringify(book));
+        return book;
+    }
 
-
-
-
-// Set localStorage
-const addToStorage = (card) => {
-    localStorage.setItem(card.title, JSON.stringify(card));
+    let push;
+    for (let i = 0; i < localStorage.length; i++){
+        (JSON.parse(localStorage.getItem(localStorage.key(i))).title == book.title) ? push = false : push = true;
+    }
+    if (push) {
+        localStorage.setItem(book.title, JSON.stringify(book));
+        console.log()
+        return book;
+    } else {
+        displayErrorMsg("This book has already been added");
+        form.reset();
+        return undefined; 
+    }
 }
 
-// get from localStorage
+
