@@ -9,10 +9,6 @@ const form = document.getElementById("form");
 const modalOverlay = document.querySelector(".modal-overlay");
 
 
-
-// array that will store the books
-myLibrary = [];
-
 // number of identification for every book
 let serialNumber = 0;
 
@@ -47,11 +43,13 @@ addBtn.addEventListener("click", () => {
 closeBtnModal.addEventListener("click", () => {
     modal.classList.remove("show");
     form.reset();
+    clearErrorMsg();
 })
 window.addEventListener("click", (e) => {
     if (e.target === modalOverlay) {
         modal.classList.remove("show");
         form.reset();
+        clearErrorMsg();
     }
 })
 
@@ -69,6 +67,11 @@ const displayErrorMsg = (text) => {
     }
 }
 
+const clearErrorMsg = () => {
+    if (form.lastElementChild.style.color == "red"){
+        form.removeChild(form.lastChild);
+    }
+}
 
 const createBook = (author,title,pages,read) => {
     return new Book(author, title, pages, read, serialNumber);
@@ -122,20 +125,23 @@ const renderBook = (book) => {
     // add event listeners to buttons
     newRemoveBtn.addEventListener("click", (e) => {
         e.target.parentElement.remove();
-        myLibrary.forEach((item, i) => {
-            if (item.num === book.num) {
-                myLibrary.splice(i,1);
+        for (let i = 0; i < localStorage.length; i++){
+            if (JSON.parse(localStorage.getItem(localStorage.key(i))).title == book.title){
+                localStorage.removeItem(book.title);
             }
-        })
+        }
     });
 
     newReadBtn.addEventListener("click", (e) => {
-        myLibrary.forEach(item => {
-            if (item.num === book.num){
+        for (let i = 0; i < localStorage.length; i++){
+            if (JSON.parse(localStorage.getItem(localStorage.key(i))).title == book.title){
+                let item = JSON.parse(localStorage.getItem(localStorage.key(i)));
+                item = Object.assign(new Book(), item);
                 item.changeReadStatus();
+                localStorage.setItem(book.title, JSON.stringify(item));
                 e.target.textContent = item.read;
             }
-        })
+        }
     })
 
     // increment serialNumber
@@ -172,12 +178,13 @@ submitBookBtn.addEventListener("click", (e)=> {
         renderBook(newBook);
         modal.classList.remove("show");
         form.reset();
+        clearErrorMsg();
     }
 })
 
-
 // store new books to Storage
 const addBookToStorage = (book) => {
+
     if (localStorage.length === 0){
         localStorage.setItem(book.title, JSON.stringify(book));
         return book;
@@ -185,17 +192,25 @@ const addBookToStorage = (book) => {
 
     let push;
     for (let i = 0; i < localStorage.length; i++){
-        (JSON.parse(localStorage.getItem(localStorage.key(i))).title == book.title) ? push = false : push = true;
+        if (JSON.parse(localStorage.getItem(localStorage.key(i))).title == book.title) {
+            push = true;
+            break;
+        } else {
+            push = false;
+        }
     }
+
     if (push) {
-        localStorage.setItem(book.title, JSON.stringify(book));
-        console.log()
-        return book;
-    } else {
         displayErrorMsg("This book has already been added");
         form.reset();
-        return undefined; 
+        return undefined;  
+    } else {
+        localStorage.setItem(book.title, JSON.stringify(book));
+        console.log(book)
+        return book;
     }
+
+    
 }
 
 
