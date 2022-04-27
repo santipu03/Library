@@ -12,6 +12,7 @@ const modalOverlay = document.querySelector(".modal-overlay");
 
 // array that will store the books
 myLibrary = [];
+
 // number of identification for every book
 let serialNumber = 0;
 
@@ -28,6 +29,19 @@ class Book {
     }
 }
 
+
+// Display localStorage items
+const displayItemsInStorage = () => {
+    if (localStorage.length > 0){
+        for (let i = 0; i < localStorage.length; i++){
+            let book = JSON.parse(localStorage.getItem(localStorage.key(i)));
+            addBookToLibrary(book);
+            renderBook(book);
+        }
+    }
+}
+
+
 // Modal Event Listeners to open and close it
 addBtn.addEventListener("click", () => {
     modal.classList.add("show");
@@ -43,6 +57,9 @@ window.addEventListener("click", (e) => {
     }
 })
 
+// Window Event to load localStorage
+window.addEventListener("DOMContentLoaded", displayItemsInStorage)
+
 // Verify that the error message isn't already displayed, create it and display it in the form
 const displayErrorMsg = (text) => {
     let message = document.createElement("div");
@@ -54,11 +71,13 @@ const displayErrorMsg = (text) => {
     }
 }
 
-// add book to the array
-const addBookToLibrary = (author, title, pages, read) => {
 
-    // create book from constructor
-    let book = new Book(author, title, pages, read, serialNumber);
+const craeteBook = (author,title,pages,read) => {
+    return new Book(author, title, pages, read, serialNumber);
+}
+
+// add book to the array
+const addBookToLibrary = (book) => {
     
     // if there's no books in the array, push it and finish
     if (myLibrary.length == 0) {
@@ -174,10 +193,24 @@ submitBookBtn.addEventListener("click", (e)=> {
     (transactionFormData.get("read") == "on") ? readCheck = "read" : readCheck = "not read"
 
     // add book to the array and display it in screen
-    let newBook = addBookToLibrary(transactionFormData.get("author"),transactionFormData.get("title"),transactionFormData.get("pages"),readCheck);
+    let newBook = craeteBook(transactionFormData.get("author"),transactionFormData.get("title"),transactionFormData.get("pages"),readCheck);
+    addBookToLibrary(newBook);
     if (newBook !== undefined) {
         renderBook(newBook);
+        addToStorage(newBook);
         modal.classList.remove("show");
         form.reset();
     }
 })
+
+
+
+
+
+
+// Set localStorage
+const addToStorage = (card) => {
+    localStorage.setItem(card.title, JSON.stringify(card));
+}
+
+// get from localStorage
