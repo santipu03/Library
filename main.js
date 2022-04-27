@@ -208,9 +208,5 @@ const addBookToStorage = (book) => {
         localStorage.setItem(book.title, JSON.stringify(book));
         console.log(book)
         return book;
-    }
-
-    
+    } 
 }
-
-
