@@ -24,7 +24,7 @@ class Library {
     this.books = books
   }
   addBook (newBook) {
-    if (this.books.find(book => book.name === newBook.name)) {
+    if (this.books.find(book => book.name === newBook.title)) {
       return false
     } 
     this.books.push(newBook)
