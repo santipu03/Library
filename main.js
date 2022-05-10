@@ -50,6 +50,7 @@ class Book {
 }
 
 
+
 // LOCAL STORAGE FUNCTIONS
 const displayBooksInStorage = () => getLocalStorage().getBooks().forEach(book => renderBook(book))
 
@@ -79,25 +80,44 @@ const setBookInStorage = (book) => {
   return isAdded
 }
 
-// Modal Event Listeners to open and close it
-addBtn.addEventListener('click', () => {
-  modal.classList.add('show');
-})
-closeBtnModal.addEventListener('click', () => {
-  modal.classList.remove('show');
-  form.reset();
-  clearErrorMsg();
-})
-window.addEventListener('click', (e) => {
-  if (e.target === modalOverlay) {
+
+const setModalEventListeners = () => {
+  addBtn.addEventListener('click', () => {
+    modal.classList.add('show');
+  })
+  closeBtnModal.addEventListener('click', () => {
     modal.classList.remove('show');
     form.reset();
     clearErrorMsg();
-  }
-})
+  })
+  window.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) {
+      modal.classList.remove('show');
+      form.reset();
+      clearErrorMsg();
+    }
+  })
 
-// Window Event to load localStorage
-window.addEventListener('DOMContentLoaded', displayBooksInStorage)
+  // Set Form Validation while typing in 'title' and 'author' inputs
+  let titleInput = document.querySelector('.title')
+  titleInput.addEventListener('input', () => {
+    if (!titleInput.checkValidity()){
+      displayErrorMsg('Title too short')
+    } else {
+      clearErrorMsg()
+    }
+  })
+
+  let authorInput = document.querySelector('.author');
+  authorInput.addEventListener('input', () => {
+    if (!authorInput.checkValidity()){
+      displayErrorMsg('Author too short')
+    } else {
+      clearErrorMsg()
+    }
+  })
+}
+
 
 // Verify that the error message isn't already displayed, create it and display it in the form
 const displayErrorMsg = (text) => {
@@ -120,21 +140,8 @@ const createBook = (author,title,pages,read) => {
   return new Book(author, title, pages, read, serialNumber);
 }
 
-// create a new card with all the classes and attributes and return it
-const createCard = () => {
-  let newCard = document.createElement('div');
-  newCard.classList.add('card');
-  newCard.setAttribute('data-num', serialNumber);
 
-  newCard.innerHTML = 
-  `<div class="title"></div>
-  <div class="author"></div>
-  <div class="pages"></div>`
-
-  return newCard;
-}
-
-const addBookEventListeners = (removeBtn, readBtn) => {
+const addBookBtnListeners = (removeBtn, readBtn) => {
   removeBtn.addEventListener('click', (e) => {
     e.target.parentElement.remove()
     let library = getLocalStorage()
@@ -156,8 +163,14 @@ const addBookEventListeners = (removeBtn, readBtn) => {
 const renderBook = (book) => {
 
   // create card
-  let newCard = createCard();
-    
+  let newCard = document.createElement('div');
+  newCard.classList.add('card');
+  newCard.setAttribute('data-num', serialNumber);
+  newCard.innerHTML = 
+  `<div class="title">${book.title}</div>
+  <div class="author">${book.author}</div>
+  <div class="pages">${book.pages}</div>`
+
   //define and create buttons to handle events
   let newRemoveBtn = document.createElement('button');
   let newReadBtn = document.createElement('button');
@@ -166,10 +179,7 @@ const renderBook = (book) => {
   newCard.appendChild(newReadBtn);
   newCard.appendChild(newRemoveBtn);
 
-  // add values of element in array to div and append to main
-  newCard.children[0].textContent = book.title;
-  newCard.children[1].textContent = book.author;
-  newCard.children[2].textContent = book.pages;
+  // add values of buttons in array to div and append to main
   newCard.children[3].textContent = book.read;
   newCard.children[4].textContent = 'Remove';
   main.appendChild(newCard);
@@ -177,15 +187,17 @@ const renderBook = (book) => {
   // verify if the addButton element is not in last place and move it
   (addBtn.nextElementSibling !== null)? main.appendChild(addBtn): 0;
 
-  addBookEventListeners(newRemoveBtn,newReadBtn)
+  addBookBtnListeners(newRemoveBtn,newReadBtn)
 
   // increment serialNumber
   serialNumber++;
 }
 
+
+
 // validate that all the fields are completed
 const formValidation = (title, author, pages) => {
-  if (title.length <= 0 || author.length <= 0 || pages.length <= 0){
+  if (title.length <= 2 || author.length <= 2 || pages.length <= 1){
     displayErrorMsg('Complete all the fields');
     return false
   }
@@ -217,4 +229,9 @@ submitBookBtn.addEventListener('click', (e)=> {
     displayErrorMsg('This book has already been added');
     form.reset();
   }
+})
+
+window.addEventListener('DOMContentLoaded', () => {
+  displayBooksInStorage()
+  setModalEventListeners()
 })

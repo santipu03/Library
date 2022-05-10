@@ -10,6 +10,7 @@
     --white: #fff;
     --black: #000;
     --green-btn: #86efac;
+    --red: #f00;
 
 }
 
@@ -186,6 +187,8 @@ form > input {
 form > input:focus {
     border: 2px solid var(--black);
 }
+
+
 .read-input {
     display: flex;
     align-items: center;
