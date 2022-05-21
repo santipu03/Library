@@ -99,22 +99,19 @@ const setModalEventListeners = () => {
   })
 
   // Set Form Validation while typing in 'title' and 'author' inputs
-  let titleInput = document.querySelector('.title')
+  let titleInput = document.querySelector('.input-title')
   titleInput.addEventListener('input', () => {
-    if (!titleInput.checkValidity()){
-      displayErrorMsg('Title too short')
-    } else {
-      clearErrorMsg()
-    }
+    (!titleInput.checkValidity()) ? displayErrorMsg('Title too short') : clearErrorMsg()
   })
 
-  let authorInput = document.querySelector('.author');
+  let authorInput = document.querySelector('.input-author');
   authorInput.addEventListener('input', () => {
-    if (!authorInput.checkValidity()){
-      displayErrorMsg('Author too short')
-    } else {
-      clearErrorMsg()
-    }
+    (!authorInput.checkValidity()) ? displayErrorMsg('Author too short') : clearErrorMsg()
+  })
+
+  let pagesInput = document.querySelector('.input-pages');
+  pagesInput.addEventListener('input', () => {
+    (!pagesInput.checkValidity()) ? displayErrorMsg('Unrealistic number of pages') : clearErrorMsg()
   })
 }
 
@@ -197,29 +194,40 @@ const renderBook = (book) => {
 
 // validate that all the fields are completed
 const formValidation = (title, author, pages) => {
-  if (title.length <= 2 || author.length <= 2 || pages.length <= 1){
-    displayErrorMsg('Complete all the fields');
+  if (!title.checkValidity()) {
+    displayErrorMsg('Title too short')
+    return false
+  } else if (!author.checkValidity()) {
+    displayErrorMsg('Author too short')
+    return false
+  } else if (!pages.checkValidity()) {
+    displayErrorMsg('Unrealistic number of pages')
     return false
   }
+  return true
 }
 
 // event listener for the submit button of the form
 submitBookBtn.addEventListener('click', (e)=> {
   e.preventDefault();
-  let transactionFormData = new FormData(form);
+
+  const title = document.querySelector('.input-title');
+  const author = document.querySelector('.input-author');
+  const pages = document.querySelector('.input-pages');
 
   // validate the form
-  let validation = formValidation(transactionFormData.get('title'), transactionFormData.get('author'), transactionFormData.get('pages'));
-  if (validation === false) {
+  if (!formValidation(title, author, pages)) {
     return
   }
 
   // get if the book is read or not
   let readCheck;
-  (transactionFormData.get('read') == 'on') ? readCheck = 'read' : readCheck = 'not read'
+  const transactionFormData = new FormData(form);
+  transactionFormData.get('read') == 'on' ? readCheck = 'read' : readCheck = 'not read'
+
 
   // add book to the array and display it in screen
-  let newBook = createBook(transactionFormData.get('author'),transactionFormData.get('title'),transactionFormData.get('pages'),readCheck);
+  let newBook = createBook(author.value, title.value, pages.value,readCheck);
   if (setBookInStorage(newBook)) {
     renderBook(newBook);
     modal.classList.remove('show');
@@ -231,6 +239,7 @@ submitBookBtn.addEventListener('click', (e)=> {
   }
 })
 
+// Initial Load
 window.addEventListener('DOMContentLoaded', () => {
   displayBooksInStorage()
   setModalEventListeners()
