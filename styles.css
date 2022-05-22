@@ -227,5 +227,15 @@ label {
     cursor: pointer;
 }
 
-
+/* MEDIA QUERIES */
+@media (max-width: 550px) {
+  form {
+    width: 350px;
+  }
+}
+@media (max-width: 450px) {
+  form {
+    width: 300px;
+  }
+}
 
